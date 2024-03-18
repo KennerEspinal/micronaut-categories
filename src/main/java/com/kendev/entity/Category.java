@@ -1,21 +1,20 @@
 package com.kendev.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Serdeable
 @Entity
 @Table(name = "categories")
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Category {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 }
