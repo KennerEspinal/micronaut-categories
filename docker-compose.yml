@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  micronaut:
+    driver: bridge
+
 services:
   mn_category:
     container_name: 'mn_category'
@@ -11,18 +15,22 @@ services:
       POSTGRES_PASSWORD: docker
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
-      POSTGRES_LISTEN_ADDRESSES: 0.0.0.0
+      POSTGRES_LISTEN_ADDRESSES: mn_category
     ports:
       - "5432:5432"
     expose:
       - "5432"
-    command: -c listen_addresses=0.0.0.0 -p 5432
+    networks:
+      - micronaut
 
   microservicio-categorias:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8080:8080"
+    networks:
+      - micronaut
     depends_on:
       - mn_category
+    command: ["dockerize", "-wait", "tcp://mn_category:5432", "-timeout", "10s", "java", "-Dcom.sun.management.jmxremote", "-Xmx128m", "-jar", "/app/microservicio-categorias.jar"]
